@@ -13,25 +13,12 @@ import { Button, Header, Tile } from 'react-native-elements';
 import { Font } from 'expo';
 import { List, Checkbox, Flex } from 'antd-mobile';
 import Question from '../components/Question';
+
 const CheckboxItem = Checkbox.CheckboxItem;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const IMAGE_SIZE = SCREEN_WIDTH - 80;
-const envaluate = [
-  {
-    question: [
-      {
-        qData: 'who i am',
-        qAnswers: ['yoyo', 'mouyu', 'zhutou'],
-      },
-      {
-        qData: 'who i am',
-        qAnswers: ['yoyo', 'mouyu', 'zhutou'],
-      },
-    ],
-  },
-];
 const ansItem = [
   {
     ans: '非常满意',
@@ -42,9 +29,9 @@ const ansItem = [
 ];
 
 const questions = [
-  { header: '你满意老师的教学风格吗？', label: ansItem, value: '01' },
-  { header: '你对于上课纪律感受如何', label: ansItem, value: '02' },
-  { header: '你觉着上课讲的生动吗', label: ansItem, value: '03' },
+  { header: '你满意老师的教学风格吗？', label: ansItem, desc: '01' },
+  { header: '你对于上课纪律感受如何', label: ansItem, desc: '02' },
+  { header: '你觉着上课讲的生动吗', label: ansItem, desc: '03' },
 ];
 export default class EvaluateScreen extends Component {
   static navigationOptions = {
@@ -57,6 +44,7 @@ export default class EvaluateScreen extends Component {
       fontLoaded: false,
       pressed: false,
       tearcherInfo: {},
+      evaluateResult: [],
     };
   }
 
@@ -71,21 +59,45 @@ export default class EvaluateScreen extends Component {
     const tearcherInfo = this.props.navigation.state.params.tearcherInfo;
     this.setState({ fontLoaded: true, tearcherInfo: tearcherInfo });
   }
-  onChange = val => {
-    console.log(val);
+  handleChange = (item, desc) => {
+    const { evaluateResult } = this.state;
+    evaluateResult.length > 0 &&
+      evaluateResult.map(evaluate => {
+        if (evaluate['desc'] === desc) {
+          const index = evaluateResult.findIndex(value => value === evaluate);
+          evaluateResult.splice(index, 1, { desc: desc, ans: item });
+          console.log('object');
+        } else {
+          evaluateResult.push({ desc: desc, ans: item });
+          console.log('为进取');
+        }
+      });
+    evaluateResult.length === 0 &&
+      evaluateResult.push({ desc: desc, ans: item });
+    this.setState(
+      {
+        evaluateResult: evaluateResult,
+      },
+      () => {
+        console.log(this.state.evaluateResult);
+      },
+    );
   };
 
   handlePress = () => {
     const navigation = this.props.navigation;
-    navigation.navigate('EvaluateComplete');
-    this.state.pressed = true;
+    // navigation.navigate('EvaluateComplete');
   };
   render() {
     const { pressed, tearcherInfo } = this.state;
     let questionArr = [];
     questions.map((item, index) => {
       questionArr.push(
-        <Question question={item} Onchange={this.onChange} key={index} />,
+        <Question
+          question={item}
+          key={index}
+          handleChange={this.handleChange}
+        />,
       );
     });
     return (
@@ -100,22 +112,20 @@ export default class EvaluateScreen extends Component {
                 }`}
               />
               <View style={styles.questionContainer}>{questionArr}</View>
-              <View
-                style={{
+              <Button
+                raised
+                title="提交"
+                backgroundColor="rgb(29,155,211)"
+                borderRadius={20}
+                containerViewStyle={{
                   marginTop: 20,
                   marginBottom: 20,
-                  width: SCREEN_WIDTH - 100,
+                  alignItems: 'center',
+                  width: SCREEN_WIDTH - 80,
+                  backgroundColor: 'rgb(29,155,211)',
                 }}
-              >
-                <Button
-                  raised
-                  title="提交"
-                  backgroundColor="rgb(29,155,211)"
-                  borderRadius={20}
-                  containerStyle={{ marginRight: 10, marginBottom: 10 }}
-                  onPress={this.handlePress}
-                />
-              </View>
+                onPress={this.handlePress}
+              />
             </ScrollView>
           </View>
         ) : (

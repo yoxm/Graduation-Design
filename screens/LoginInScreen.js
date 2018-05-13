@@ -9,7 +9,7 @@ import {
   StyleSheet,
   ScrollView,
   Text,
-  View
+  View,
 } from 'react-native';
 import { Font } from 'expo';
 import {
@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormValidationMessage,
   Button,
-  Icon
+  Icon,
 } from 'react-native-elements';
 import UserTypeItem from '../components/UserTypeItem';
 import HomeScreen from './HomeScreen';
@@ -32,6 +32,9 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default class LoginInScreen extends Component {
+  static navigationOptions = {
+    header: null,
+  };
   constructor(props) {
     super(props);
 
@@ -43,7 +46,7 @@ export default class LoginInScreen extends Component {
       numberVaild: true,
       password: '',
       confirmationPassword: '',
-      passwordValid: true
+      passwordValid: true,
     };
   }
 
@@ -51,13 +54,15 @@ export default class LoginInScreen extends Component {
     await Font.loadAsync({
       light: require('../assets/fonts/Ubuntu-Light.ttf'),
       bold: require('../assets/fonts/Ubuntu-Bold.ttf'),
-      lightitalic: require('../assets/fonts/Ubuntu-Light-Italic.ttf')
+      lightitalic: require('../assets/fonts/Ubuntu-Light-Italic.ttf'),
     });
 
     this.setState({ fontLoaded: true });
   }
 
-  signup = () => {
+  loginIn = () => {
+    const { number, password, selectedType } = this.state;
+    console.log(number, password, selectedType);
     LayoutAnimation.easeInEaseOut();
     const numberVaild = this.validateNumber();
     const passwordValid = this.validatePassword();
@@ -70,8 +75,6 @@ export default class LoginInScreen extends Component {
       setTimeout(() => {
         LayoutAnimation.easeInEaseOut();
         this.setState({ isLoading: false });
-        Alert.alert('🎸', 'You rock');
-        console.log(this.props);
         this.props.navigation.navigate('Home');
       }, 1500);
     }
@@ -108,7 +111,7 @@ export default class LoginInScreen extends Component {
       password,
       passwordValid,
       number,
-      numberVaild
+      numberVaild,
     } = this.state;
 
     return !fontLoaded ? (
@@ -130,8 +133,8 @@ export default class LoginInScreen extends Component {
               label="学生"
               labelColor="#2CA75E"
               image={USER_STUDENT}
-              onPress={() => this.setSelectedType('child')}
-              selected={selectedType === 'child'}
+              onPress={() => this.setSelectedType('student')}
+              selected={selectedType === 'student'}
             />
             <UserTypeItem
               label="教师/领导/同行"
@@ -179,10 +182,10 @@ export default class LoginInScreen extends Component {
             linearGradientProps={{
               colors: ['#FF9800', '#F44336'],
               start: [1, 0],
-              end: [0.2, 0]
+              end: [0.2, 0],
             }}
             titleStyle={styles.signUpButtonText}
-            onPress={this.signup}
+            onPress={this.loginIn}
             disabled={isLoading}
           />
         </KeyboardAvoidingView>
@@ -200,67 +203,67 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
     alignItems: 'center',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   formContainer: {
     flex: 1,
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   signUpText: {
     color: 'white',
     fontSize: 28,
-    fontFamily: 'light'
+    fontFamily: 'light',
   },
   whoAreYouText: {
     color: '#7384B4',
     fontFamily: 'bold',
-    fontSize: 14
+    fontSize: 14,
   },
   userTypesContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: SCREEN_WIDTH,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   inputContainer: {
     paddingLeft: 8,
     height: 45,
-    marginVertical: 10
+    marginVertical: 10,
   },
   inputStyle: {
     flex: 1,
     marginLeft: 10,
     color: 'white',
     fontFamily: 'light',
-    fontSize: 16
+    fontSize: 16,
   },
   errorInputStyle: {
     marginTop: 0,
     textAlign: 'center',
-    color: '#F44336'
+    color: '#F44336',
   },
   signUpButtonText: {
     fontFamily: 'bold',
-    fontSize: 13
+    fontSize: 13,
   },
   signUpButton: {
     width: 250,
     borderRadius: 50,
-    height: 45
+    height: 45,
   },
   loginHereContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   alreadyAccountText: {
     fontFamily: 'lightitalic',
     fontSize: 12,
-    color: 'white'
+    color: 'white',
   },
   loginHereText: {
     color: '#FF9800',
     fontFamily: 'lightitalic',
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 });

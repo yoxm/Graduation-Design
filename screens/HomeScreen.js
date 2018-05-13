@@ -136,21 +136,9 @@ export default class HomeScreen extends React.Component {
     const key = info.section.key;
     return (
       <Card
-        title="HELLO WORLD"
+        title={info.section.key}
         image={require('../assets/images/bg_screen1.jpg')}
       >
-        <Text style={{ marginBottom: 10 }}>{info.section.key}</Text>
-        <Button
-          icon={{ name: 'code' }}
-          backgroundColor="#03A9F4"
-          buttonStyle={{
-            borderRadius: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            marginBottom: 0,
-          }}
-          title="VIEW NOW"
-        />
       </Card>
     );
   };
