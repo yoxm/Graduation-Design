@@ -28,7 +28,7 @@ export default class Question extends Component {
           return question.header;
         }}
       >
-        {question.label.map(item => (
+        {question.ans.map(item => (
           <RadioItem
             key={item.value}
             checked={value === item.value}

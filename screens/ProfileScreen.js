@@ -9,12 +9,41 @@ import {
 } from 'react-native';
 import { Avatar, Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
+import { delToken } from '../utils/tokenUtil';
+import { storage } from '../utils/storageTool';
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
+
 export default class ProfileScreen extends Component {
   static navigationOptions = {
     header: null,
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      userInfo: {},
+    };
+  }
+
+  signout = () => {
+    delToken('sau-token');
+    this.props.navigation.navigate('Login');
+  };
+
+  componentDidMount() {
+    storage.load('user-info', info => {
+      console.log('====================================');
+      console.log(info);
+      console.log('====================================');
+      this.setState({
+        userInfo: info,
+      });
+    });
+  }
   render() {
+    const { userInfo } = this.state;
     return (
       <View
         style={{
@@ -77,7 +106,7 @@ export default class ProfileScreen extends Component {
                       marginLeft: -15,
                     }}
                   >
-                    我的名字
+                    {userInfo.name || '未录入'}
                   </Text>
                 </View>
               </View>
@@ -114,7 +143,7 @@ export default class ProfileScreen extends Component {
               </View>
               <View style={{ flex: 1 }}>
                 <Button
-                  title="Add User"
+                  title="登出"
                   buttonStyle={{
                     height: 33,
                     width: 120,
@@ -125,7 +154,7 @@ export default class ProfileScreen extends Component {
                     fontSize: 13,
                     color: 'white',
                   }}
-                  onPress={() => console.log('aye')}
+                  onPress={this.signout}
                   underlayColor="transparent"
                 />
               </View>
@@ -149,7 +178,7 @@ export default class ProfileScreen extends Component {
                   alert('342');
                 }}
               >
-                <ListItem title="" leftIcon={{ name: 'av-timer' }} />
+                <ListItem title="录入" leftIcon={{ name: 'av-timer' }} />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {

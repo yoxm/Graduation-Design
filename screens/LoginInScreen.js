@@ -10,6 +10,7 @@ import {
   ScrollView,
   Text,
   View,
+  Keyboard,
 } from 'react-native';
 import { Font } from 'expo';
 import {
@@ -21,6 +22,12 @@ import {
 } from 'react-native-elements';
 import UserTypeItem from '../components/UserTypeItem';
 import HomeScreen from './HomeScreen';
+import dismissKeyboard from 'dismissKeyboard';
+import http from '../utils/http';
+import { Toast } from 'antd-mobile';
+import { setToken, getToken } from '../utils/tokenUtil';
+import { storage } from '../utils/storageTool';
+
 // Enable LayoutAnimation on Android
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -62,27 +69,36 @@ export default class LoginInScreen extends Component {
 
   loginIn = () => {
     const { number, password, selectedType } = this.state;
-    console.log(number, password, selectedType);
     LayoutAnimation.easeInEaseOut();
     const numberVaild = this.validateNumber();
     const passwordValid = this.validatePassword();
     if (this.state.selectedType === null) {
-      Alert.alert('请选择对应职业');
+      Toast.info('请选择对应职业', 1);
       return;
     }
     if (numberVaild && passwordValid) {
       this.setState({ isLoading: true });
-      setTimeout(() => {
-        LayoutAnimation.easeInEaseOut();
-        this.setState({ isLoading: false });
-        this.props.navigation.navigate('Home');
-      }, 1500);
+      http
+        .post('/login', {
+          id: number,
+          password: password,
+          selectedType: selectedType,
+        })
+        .then(res => {
+          dismissKeyboard();
+          const resData = res.data;
+          console.log(resData);
+          setToken('sau-token', resData.data.accessToken);
+          storage.save('user-info', resData.data.userInfo);
+          Toast.success(resData.info);
+          this.props.navigation.navigate('Home');
+        });
     }
   };
 
   validateNumber = () => {
     const { number } = this.state;
-    const numberVaild = number.length > 0 && number.length < 12;
+    const numberVaild = number.length > 0 && number.length < 16;
     LayoutAnimation.easeInEaseOut();
     this.setState({ numberVaild });
     numberVaild || this.numberInput.shake();
@@ -147,6 +163,7 @@ export default class LoginInScreen extends Component {
           <View style={{ width: ' 80%', alignItems: 'center' }}>
             <FormInput
               ref={input => (this.numberInput = input)}
+              numeric
               containerStyle={styles.inputContainer}
               leftIcon={<Icon name="school" />}
               inputStyle={styles.inputStyle}
@@ -166,12 +183,14 @@ export default class LoginInScreen extends Component {
               inputStyle={styles.inputStyle}
               value={password}
               onChangeText={password => this.setState({ password })}
+              secureTextEntry={true}
               placeholder="密码"
               returnKeyType="next"
               onSubmitEditing={() => {
                 this.validatePassword();
                 this.passwordInput.focus();
               }}
+              onSubmitEditing={Keyboard.dismiss}
             />
           </View>
           <Button

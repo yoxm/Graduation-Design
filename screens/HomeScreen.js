@@ -138,8 +138,7 @@ export default class HomeScreen extends React.Component {
       <Card
         title={info.section.key}
         image={require('../assets/images/bg_screen1.jpg')}
-      >
-      </Card>
+      />
     );
   };
 

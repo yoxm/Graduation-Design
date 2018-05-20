@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Dimensions, StyleSheet } from 'react-native';
+import { View, Dimensions, StyleSheet, ScrollView } from 'react-native';
 import Echarts from 'native-echarts';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -7,93 +7,301 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default class YearChart extends Component {
   render() {
-    const yearOption = {
-      title: {
-        text: '历年满意度堆叠图',
-        left: 'center',
-        top: 15,
-      },
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-          label: {
-            backgroundColor: '#6a7985',
+    var data = [
+      {
+        time: '人气最旺的十位老师（投票人数）',
+        data: [
+          {
+            name: '李兆奎老师',
+            value: [107, '李兆奎老师'],
           },
-        },
+          {
+            name: 'aaa',
+            value: [104, 'aaa'],
+          },
+          {
+            name: 'bbb',
+            value: [90, 'bbb'],
+          },
+          {
+            name: 'ccc',
+            value: [89, 'ccc'],
+          },
+          {
+            name: 'ddd',
+            value: [83, 'ddd'],
+          },
+          {
+            name: 'eee',
+            value: [58, 'eee'],
+          },
+          {
+            name: 'fff',
+            value: [52, 'fff'],
+          },
+          {
+            name: 'ggg',
+            value: [49, 'ggg'],
+          },
+          {
+            name: 'hhh',
+            value: [48, 'hhh'],
+          },
+          {
+            name: 'iii',
+            value: [41, 'iii'],
+          },
+        ],
       },
-      legend: {
-        top: 50,
-        data: ['非常满意', '很满意', '一般', '不满意', '未评价'],
+      {
+        time: '最满意老师（满意率）',
+        data: [
+          {
+            name: 'xxx',
+            value: [98, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [97, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [96, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [95, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [94, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [93, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [92, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [91, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [90, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [89, 'xxx'],
+          },
+        ],
       },
-      toolbox: {
-        feature: {
-          saveAsImage: {},
-        },
+      {
+        time: '收到满意最多的老师',
+        data: [
+          {
+            name: 'xxx',
+            value: [162, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [126, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [115, 'xxx'],
+          },
+          {
+            name: 'xxx',
+            value: [94, 'xxx'],
+          },
+          {
+            name: 'sss',
+            value: [86, 'sss'],
+          },
+          {
+            name: 'xxx',
+            value: [85, 'xxx'],
+          },
+          {
+            name: 'aaa',
+            value: [85, 'aaa'],
+          },
+          {
+            name: 'bbb',
+            value: [83, 'bbb'],
+          },
+          {
+            name: '232',
+            value: [82, '232'],
+          },
+          {
+            name: 'ccc',
+            value: [80, 'ccc'],
+          },
+        ],
       },
-      grid: {
-        top: 80,
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
-        containLabel: true,
-      },
-      xAxis: [
-        {
-          type: 'category',
-          boundaryGap: false,
-          data: ['2012', '2013', '2014', '2015', '2016', '2017', '2018'],
-        },
-      ],
-      yAxis: [
-        {
-          type: 'value',
-        },
-      ],
-      series: [
-        {
-          name: '非常满意',
-          type: 'line',
-          stack: '总量',
-          areaStyle: { normal: {} },
-          data: [120, 132, 101, 134, 90, 230, 210],
-        },
-        {
-          name: '很满意',
-          type: 'line',
-          stack: '总量',
-          areaStyle: { normal: {} },
-          data: [220, 182, 191, 234, 290, 330, 310],
-        },
-        {
-          name: '一般',
-          type: 'line',
-          stack: '总量',
-          areaStyle: { normal: {} },
-          data: [150, 232, 201, 154, 190, 330, 410],
-        },
-        {
-          name: '不满意',
-          type: 'line',
-          stack: '总量',
-          areaStyle: { normal: {} },
-          data: [320, 332, 301, 334, 390, 330, 320],
-        },
-        {
-          name: '未评价',
-          type: 'line',
-          stack: '总量',
+    ];
+
+    var option = {
+      backgroundColor: '#25499F',
+      baseOption: {
+        animationDurationUpdate: 1000,
+        animationEasingUpdate: 'quinticInOut',
+        timeline: {
+          axisType: 'category',
+          orient: 'vertical',
+          autoPlay: true,
+          playInterval: 5000,
+          left: null,
+          right: 150,
+          top: 40,
+          bottom: 20,
+          width: 46,
+          height: null,
           label: {
             normal: {
               show: true,
-              position: 'top',
+              interval: 0,
             },
           },
-          areaStyle: { normal: {} },
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          symbol: 'none',
+          lineStyle: {
+            color: '#ccc',
+            show: false,
+          },
+          checkpointStyle: {
+            color: '#bbb',
+            borderColor: '#777',
+            show: false,
+            borderWidth: 1,
+          },
+          controlStyle: {
+            showNextBtn: false,
+            showPrevBtn: false,
+            normal: {
+              color: '#666',
+              show: false,
+              borderColor: '#666',
+            },
+            emphasis: {
+              color: '#aaa',
+              borderColor: '#aaa',
+            },
+          },
+          data: data.map(function(ele) {
+            return ele.time;
+          }),
         },
-      ],
+        title: [
+          {
+            left: 'center',
+            top: 'top',
+            textStyle: {
+              fontSize: 25,
+            },
+          },
+          {
+            left: 'center',
+            top: '5%',
+          },
+        ],
+        tooltip: {
+          formatter: function(params) {
+            if ('value' in params.data) {
+              return params.data.value[2] + ': ' + params.data.value[0];
+            }
+          },
+        },
+        grid: {
+          left: 10,
+          right: '20%',
+          top: '12%',
+          bottom: 5,
+        },
+        xAxis: {},
+        yAxis: {},
+        series: [
+          {
+            id: 'bar',
+            type: 'bar',
+            tooltip: {
+              show: false,
+            },
+            label: {
+              normal: {
+                show: true,
+                position: 'right',
+                textStyle: {
+                  //  color: '#ddd'
+                },
+              },
+            },
+            data: [],
+          },
+        ],
+      },
+      options: [],
     };
-    return <Echarts width={SCREEN_WIDTH} option={yearOption} />;
+
+    for (var i = 0; i < data.length; i++) {
+      option.options.push({
+        title: {
+          text: data[i].time,
+        },
+        xAxis: {
+          type: 'value',
+          boundaryGap: [0, 0.1],
+          axisLabel: {
+            show: false,
+          },
+          splitLine: {
+            show: false,
+          },
+        },
+        yAxis: {
+          type: 'category',
+          axisLabel: {
+            show: false,
+            textStyle: {
+              //  color: '#ddd'
+            },
+          },
+
+          data: data[i].data
+            .map(function(ele) {
+              return ele.value[1];
+            })
+            .reverse(),
+        },
+        series: [
+          {
+            id: 'bar',
+            label: {
+              normal: {
+                position: 'right',
+                formatter: '{b} : {c}',
+              },
+            },
+            data: data[i].data
+              .map(function(ele) {
+                return ele.value[0];
+              })
+              .sort(function(a, b) {
+                return a > b;
+              }),
+          },
+        ],
+      });
+    }
+    const yearOption = {};
+
+    return (
+      <ScrollView>
+        <Echarts option={option} width={SCREEN_WIDTH} />
+      </ScrollView>
+    );
   }
 }

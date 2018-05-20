@@ -1,33 +1,52 @@
 import { Notifications } from 'expo';
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-
+import { View, Text } from 'react-native';
 import MainTabNavigator from './MainTabNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 import LoginInScreen from '../screens/LoginInScreen';
-
-const RootStackNavigator = StackNavigator(
-  {
-    Main: {
-      screen: MainTabNavigator,
-    },
-    Login: {
-      screen: LoginInScreen,
-    },
-  },
-  {
-    initialRouteName: 'Login',
-    navigationOptions: () => ({
-      headerTitleStyle: {
-        fontWeight: 'normal',
+import { getToken } from '../utils/tokenUtil';
+import Loading from '../components/Loading';
+const configRootNavigator = isLogin => {
+  return StackNavigator(
+    {
+      Main: {
+        screen: MainTabNavigator,
       },
-    }),
-  },
-);
+      Login: {
+        screen: LoginInScreen,
+      },
+    },
+    {
+      initialRouteName: isLogin ? 'Main' : 'Login',
+      navigationOptions: () => ({
+        headerTitleStyle: {
+          fontWeight: 'normal',
+        },
+      }),
+    },
+  );
+};
 
 export default class RootNavigator extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLogin: false,
+      isLoading: true,
+    };
+  }
   componentDidMount() {
     this._notificationSubscription = this._registerForPushNotifications();
+    getToken('sau-token', token => {
+      if (token) {
+        this.setState({
+          isLogin: true,
+          isLoading: false,
+        });
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -35,7 +54,10 @@ export default class RootNavigator extends React.Component {
   }
 
   render() {
-    return <RootStackNavigator />;
+    const { isLogin, isLoading } = this.state;
+    const RootNavigator = configRootNavigator(this.state.isLogin);
+
+    return isLoading ? <Loading /> : <RootNavigator />;
   }
 
   _registerForPushNotifications() {
