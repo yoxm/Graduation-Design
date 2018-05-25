@@ -34,7 +34,6 @@ export default class RootNavigator extends React.Component {
 
     this.state = {
       isLogin: false,
-      isLoading: true,
     };
   }
   componentDidMount() {
@@ -43,7 +42,6 @@ export default class RootNavigator extends React.Component {
       if (token) {
         this.setState({
           isLogin: true,
-          isLoading: false,
         });
       }
     });
@@ -57,7 +55,7 @@ export default class RootNavigator extends React.Component {
     const { isLogin, isLoading } = this.state;
     const RootNavigator = configRootNavigator(this.state.isLogin);
 
-    return isLoading ? <Loading /> : <RootNavigator />;
+    return <RootNavigator />;
   }
 
   _registerForPushNotifications() {

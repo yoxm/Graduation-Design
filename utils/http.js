@@ -96,7 +96,7 @@ export default {
           cancel = c;
         }),
       }).then(res => {
-        resolve(res);
+        resolve(res.data);
       });
     });
   },
@@ -111,7 +111,7 @@ export default {
           cancel = c;
         }),
       }).then(res => {
-        resolve(res);
+        resolve(res.data);
       });
     });
   },

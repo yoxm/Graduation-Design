@@ -12,8 +12,8 @@ export default class YearChart extends Component {
         time: '人气最旺的十位老师（投票人数）',
         data: [
           {
-            name: '李兆奎老师',
-            value: [107, '李兆奎老师'],
+            name: 'hhh',
+            value: [342, 'hhh'],
           },
           {
             name: 'aaa',

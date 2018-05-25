@@ -21,6 +21,7 @@ import {
   List,
   Button,
 } from 'react-native-elements';
+import http from '../utils/http';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -31,32 +32,22 @@ const mockTeachers = [
     academy: '计算机学院',
     data: [
       {
-        name: '张翼飞',
+        name: '张翼飞老师',
         job: '院长',
         clourse: '软件工程',
       },
       {
-        name: '刘琨',
+        name: '刘琨老师',
         job: '讲师',
         clourse: 'ACM',
       },
       {
-        name: '张翼飞',
+        name: '赵亮老师',
         job: '院长',
         clourse: '软件工程',
       },
       {
-        name: '张翼飞',
-        job: '院长',
-        clourse: '软件工程',
-      },
-      {
-        name: '张翼飞',
-        job: '院长',
-        clourse: '软件工程',
-      },
-      {
-        name: '张翼飞',
+        name: '刘香芹老师',
         job: '院长',
         clourse: '软件工程',
       },
@@ -67,34 +58,40 @@ const mockTeachers = [
     academy: '机械学院',
     data: [
       {
-        name: '张翼飞',
+        name: '张翼飞老师',
         job: '院长',
         clourse: '软件工程',
       },
       {
-        name: '刘香芹',
+        name: '刘香芹老师',
         job: '副教授',
         clourse: '编译原理',
       },
       {
-        name: '刘香芹',
+        name: '刘香芹老师',
         job: '副教授',
         clourse: '编译原理',
+      },
+    ],
+  },
+  {
+    key: '外国语学院',
+    academy: '外国语学院',
+    data: [
+      {
+        name: 'Allen老师',
+        job: '院长',
+        clourse: '英语',
+      },
+      {
+        name: 'Tony老师',
+        job: '副教授',
+        clourse: '英语',
       },
       {
         name: '刘香芹',
         job: '副教授',
-        clourse: '编译原理',
-      },
-      {
-        name: '刘香芹',
-        job: '副教授',
-        clourse: '编译原理',
-      },
-      {
-        name: '刘香芹',
-        job: '副教授',
-        clourse: '编译原理',
+        clourse: '英语',
       },
     ],
   },
@@ -113,10 +110,37 @@ export default class HomeScreen extends React.Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { teachers } = this.state;
+    const commentedTeacher = await http.get('/public/getCommentedTeacher');
+    const teacherData = commentedTeacher.data.teacher;
+    let teacherArr = [];
+
+    teacherData.length &&
+      teacherData.map(item => {
+        if (item.isCommented === '0') {
+          let flag = false;
+          teacherArr.map(value => {
+            if (item.academy === value.academy) {
+              flag = true;
+              value['data'].push(item);
+            }
+          });
+
+          !flag &&
+            teacherArr.push({
+              key: item.academy,
+              academy: item.academy,
+              data: (() => {
+                let arrTmp = [];
+                arrTmp.push(item);
+                return arrTmp;
+              })(),
+            });
+        }
+      });
     this.setState({
-      teachers: mockTeachers,
+      teachers: teacherArr,
     });
   }
 
@@ -144,6 +168,9 @@ export default class HomeScreen extends React.Component {
 
   handleSearchChange = () => {};
   handleSearchClear = () => {};
+  /**
+   * 列表信息跳转
+   */
   handleListPress = info => {
     const navigation = this.props.navigation;
     navigation.navigate('Evaluate', { tearcherInfo: info.item });

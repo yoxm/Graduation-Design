@@ -44,10 +44,13 @@ export default class EvaluateScreen extends Component {
   async componentDidMount() {
     const question = await http.get('/public/getQuestionByType?type=001');
     const tearcherInfo = this.props.navigation.state.params.tearcherInfo;
+    console.log('====================================');
+    console.log(tearcherInfo);
+    console.log('====================================');
     this.setState({
       questionLoaded: true,
       tearcherInfo: tearcherInfo,
-      question: question.data.data.ans,
+      question: question.data.ans,
     });
   }
 
@@ -102,11 +105,10 @@ export default class EvaluateScreen extends Component {
             <ScrollView style={{ flex: 1 }}>
               <Tile
                 imageSrc={require('../assets/images/bg_screen4.jpg')}
-                title={`${tearcherInfo.name}-${tearcherInfo.job}-${
-                  tearcherInfo.clourse
+                title={`${tearcherInfo.academy}-${tearcherInfo.name}-${
+                  tearcherInfo.profession
                 }`}
               />
-              {}
               <View style={styles.questionContainer}>{questionArr}</View>
               <Button
                 raised

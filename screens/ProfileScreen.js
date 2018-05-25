@@ -178,7 +178,10 @@ export default class ProfileScreen extends Component {
                   alert('342');
                 }}
               >
-                <ListItem title="录入" leftIcon={{ name: 'av-timer' }} />
+                <ListItem
+                  title="评价结果导出"
+                  leftIcon={{ name: 'av-timer' }}
+                />
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
@@ -186,7 +189,7 @@ export default class ProfileScreen extends Component {
                 }}
               >
                 <ListItem
-                  title="录入参评教师信息"
+                  title="参评信息到处"
                   leftIcon={{ name: 'av-timer' }}
                 />
               </TouchableOpacity>

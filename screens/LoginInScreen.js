@@ -86,7 +86,7 @@ export default class LoginInScreen extends Component {
         })
         .then(res => {
           dismissKeyboard();
-          const resData = res.data;
+          const resData = res;
           console.log(resData);
           setToken('sau-token', resData.data.accessToken);
           storage.save('user-info', resData.data.userInfo);
