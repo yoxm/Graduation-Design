@@ -35,22 +35,23 @@ export default class EvaluateScreen extends Component {
     this.state = {
       questionLoaded: false,
       pressed: false,
-      tearcherInfo: {},
+      teacherInfo: {},
       evaluateResult: new Map(),
       question: [],
+      loading: false,
     };
   }
 
   async componentDidMount() {
     const question = await http.get('/public/getQuestionByType?type=001');
-    const tearcherInfo = this.props.navigation.state.params.tearcherInfo;
-    console.log('====================================');
-    console.log(tearcherInfo);
-    console.log('====================================');
-    this.setState({
-      questionLoaded: true,
-      tearcherInfo: tearcherInfo,
-      question: question.data.ans,
+    const { teacherInfo } = this.props.navigation.state.params;
+    storage.load('user-info', info => {
+      this.setState({
+        userInfo: info,
+        questionLoaded: true,
+        teacherInfo: teacherInfo,
+        question: question.data.ans,
+      });
     });
   }
 
@@ -67,8 +68,11 @@ export default class EvaluateScreen extends Component {
    * 处理提交
    */
   handlePress = () => {
+    this.setState({
+      loading: true,
+    });
     const navigation = this.props.navigation;
-    const { evaluateResult, question } = this.state;
+    const { evaluateResult, question, teacherInfo, userInfo } = this.state;
     if (question.length !== evaluateResult.size) {
       Toast.fail('请填写完整！', 2, null, false);
     } else {
@@ -76,16 +80,34 @@ export default class EvaluateScreen extends Component {
       evaluateResult.forEach((value, index) => {
         resultArr.push({ desc: index, ans: value });
       });
-      storage.load('user-info', info => {
-        // http.post("")
-      });
+      http
+        .post('public/entryResult', {
+          appraiser: userInfo.id,
+          evaluateResult: resultArr,
+          commentedTeacherId: teacherInfo.id,
+        })
+        .then(res => {
+          this.setState({
+            loading: false,
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          this.setState({
+            loading: false,
+          });
+        });
+      http
+        .get(`public/setCommentedById?id=${teacherInfo.id}`)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
 
       navigation.navigate('EvaluateComplete');
     }
   };
 
   render() {
-    const { pressed, tearcherInfo, question } = this.state;
+    const { pressed, teacherInfo, question, loading, userInfo } = this.state;
     let questionArr = [];
     if (question.length > 0) {
       question.map((item, index) => {
@@ -105,14 +127,25 @@ export default class EvaluateScreen extends Component {
             <ScrollView style={{ flex: 1 }}>
               <Tile
                 imageSrc={require('../assets/images/bg_screen4.jpg')}
-                title={`${tearcherInfo.academy}-${tearcherInfo.name}-${
-                  tearcherInfo.profession
+                title={`${teacherInfo.academy}-${teacherInfo.name}-${
+                  teacherInfo.profession
                 }`}
+                onPress={() => {
+                  this.props.navigation.navigate('modifyTeacher', {
+                    teacherInfo: teacherInfo,
+                  });
+                }}
               />
+              {userInfo.teacherId ? (
+                <View>
+                  <Text style={styles.tips}>点击图片可修改教师信息</Text>
+                </View>
+              ) : null}
               <View style={styles.questionContainer}>{questionArr}</View>
               <Button
                 raised
                 title="提交"
+                loading={loading}
                 borderRadius={20}
                 buttonStyle={{
                   alignItems: 'center',
@@ -135,4 +168,10 @@ export default class EvaluateScreen extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  tips: {
+    color: 'gray',
+    marginLeft: 15,
+    marginBottom: 10,
+  },
+});

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ResultPage from '../components/ResultPage';
-export default class EvaluateCompleteScreen extends Component {
+export default class ScanCompleteScreen extends Component {
   static navigationOptions = {
     header: null,
   };

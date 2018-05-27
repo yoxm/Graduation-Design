@@ -12,6 +12,11 @@ import EvaluateCompleteScreen from '../screens/EvaluateCompleteScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import ScanInfoScreen from '../screens/ScanInfoScreen';
 import EvaluateChartsScreen from '../screens/EvaluateChartsScreen';
+import ScanCompleteScreen from '../screens/ScanCompleteScreen';
+import ViewProfileScreen from '../screens/ViewProfileScreen';
+import ModifyTeacher from '../screens/ModifyTeacherScreen';
+import ModifyComplete from '../screens/ModifyCompleteScreen';
+
 const HomeStack = StackNavigator({
   Home: { screen: HomeScreen, path: 'app/home' },
   Evaluate: { screen: EvaluateScreen, path: 'app/home/evaluate' },
@@ -19,11 +24,15 @@ const HomeStack = StackNavigator({
     screen: EvaluateCompleteScreen,
     path: 'app/home/evaluate/evaluateComplete',
   },
+  modifyTeacher: { screen: ModifyTeacher },
+  ModifyComplete: { screen: ModifyComplete },
 });
 
 const ProfileStack = StackNavigator({
   profile: { screen: ProfileScreen },
   scanInfo: { screen: ScanInfoScreen },
+  scanInfoComplete: { screen: ScanCompleteScreen },
+  viewProfile: { screen: ViewProfileScreen },
 });
 
 export default TabNavigator(

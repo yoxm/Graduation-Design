@@ -11,91 +11,21 @@ import {
   Alert,
   SectionList,
 } from 'react-native';
-import { WebBrowser } from 'expo';
+import { WebBrowser, Asset } from 'expo';
 import { Toast } from 'antd-mobile';
 import {
   SearchBar,
   Header,
-  Card,
   ListItem,
   List,
   Button,
+  Card,
+  Tile,
 } from 'react-native-elements';
 import http from '../utils/http';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-
-const mockTeachers = [
-  {
-    key: '计算机学院',
-    academy: '计算机学院',
-    data: [
-      {
-        name: '张翼飞老师',
-        job: '院长',
-        clourse: '软件工程',
-      },
-      {
-        name: '刘琨老师',
-        job: '讲师',
-        clourse: 'ACM',
-      },
-      {
-        name: '赵亮老师',
-        job: '院长',
-        clourse: '软件工程',
-      },
-      {
-        name: '刘香芹老师',
-        job: '院长',
-        clourse: '软件工程',
-      },
-    ],
-  },
-  {
-    key: '机械学院',
-    academy: '机械学院',
-    data: [
-      {
-        name: '张翼飞老师',
-        job: '院长',
-        clourse: '软件工程',
-      },
-      {
-        name: '刘香芹老师',
-        job: '副教授',
-        clourse: '编译原理',
-      },
-      {
-        name: '刘香芹老师',
-        job: '副教授',
-        clourse: '编译原理',
-      },
-    ],
-  },
-  {
-    key: '外国语学院',
-    academy: '外国语学院',
-    data: [
-      {
-        name: 'Allen老师',
-        job: '院长',
-        clourse: '英语',
-      },
-      {
-        name: 'Tony老师',
-        job: '副教授',
-        clourse: '英语',
-      },
-      {
-        name: '刘香芹',
-        job: '副教授',
-        clourse: '英语',
-      },
-    ],
-  },
-];
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -106,12 +36,11 @@ export default class HomeScreen extends React.Component {
 
     this.state = {
       teachers: [],
-      refreshing: true,
+      refreshing: false,
     };
   }
 
-  async componentDidMount() {
-    const { teachers } = this.state;
+  getTeacherData = async () => {
     const commentedTeacher = await http.get('/public/getCommentedTeacher');
     const teacherData = commentedTeacher.data.teacher;
     let teacherArr = [];
@@ -142,6 +71,10 @@ export default class HomeScreen extends React.Component {
     this.setState({
       teachers: teacherArr,
     });
+  };
+
+  async componentDidMount() {
+    this.getTeacherData();
   }
 
   renderRow = info => {
@@ -157,12 +90,16 @@ export default class HomeScreen extends React.Component {
   };
 
   _sectionComp = info => {
-    const key = info.section.key;
+    console.log(info);
     return (
       <Card
-        title={info.section.key}
-        image={require('../assets/images/bg_screen1.jpg')}
-      />
+        title={info.section.academy}
+        image={require('../assets/images/bg_screen2.jpg')}
+      >
+        <View>
+          <Text>{`共${info.section.data.length}位老师`}</Text>
+        </View>
+      </Card>
     );
   };
 
@@ -173,9 +110,10 @@ export default class HomeScreen extends React.Component {
    */
   handleListPress = info => {
     const navigation = this.props.navigation;
-    navigation.navigate('Evaluate', { tearcherInfo: info.item });
+    navigation.navigate('Evaluate', { teacherInfo: info.item });
   };
   render() {
+    const { refreshing } = this.state;
     return (
       <View style={styles.container}>
         <View>
@@ -198,7 +136,10 @@ export default class HomeScreen extends React.Component {
           renderItem={this.renderRow}
           sections={this.state.teachers}
           keyExtractor={(item, index) => 'index' + index + item}
+          refreshing={refreshing}
+          onRefresh={this.getTeacherData}
         />
+        {/* stickySectionHeadersEnabled={true} */}
       </View>
     );
   }

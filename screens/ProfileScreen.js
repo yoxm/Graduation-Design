@@ -44,6 +44,8 @@ export default class ProfileScreen extends Component {
   }
   render() {
     const { userInfo } = this.state;
+    const navigation = this.props.navigation;
+
     return (
       <View
         style={{
@@ -124,7 +126,7 @@ export default class ProfileScreen extends Component {
             <View
               style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}
             >
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, marginLeft: 20 }}>
                 <Button
                   title="View Profile"
                   buttonStyle={{
@@ -137,11 +139,11 @@ export default class ProfileScreen extends Component {
                     fontSize: 13,
                     color: 'gray',
                   }}
-                  onPress={() => console.log('aye')}
+                  onPress={() => navigation.navigate('viewProfile')}
                   underlayColor="transparent"
                 />
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1, marginLeft: 10 }}>
                 <Button
                   title="登出"
                   buttonStyle={{
@@ -162,12 +164,7 @@ export default class ProfileScreen extends Component {
           </View>
           <View>
             <List>
-              <TouchableOpacity
-                onPress={() => {
-                  const navigation = this.props.navigation;
-                  navigation.navigate('scanInfo');
-                }}
-              >
+              <TouchableOpacity onPress={() => navigation.navigate('scanInfo')}>
                 <ListItem
                   title="录入参评教师信息"
                   leftIcon={{ name: 'av-timer' }}
@@ -189,7 +186,7 @@ export default class ProfileScreen extends Component {
                 }}
               >
                 <ListItem
-                  title="参评信息到处"
+                  title="参评教师信息导出"
                   leftIcon={{ name: 'av-timer' }}
                 />
               </TouchableOpacity>

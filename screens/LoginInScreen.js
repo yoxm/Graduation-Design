@@ -12,6 +12,7 @@ import {
   View,
   Keyboard,
 } from 'react-native';
+import { StackNavigator, NavigationActions } from 'react-navigation';
 import { Font } from 'expo';
 import {
   FormInput,
@@ -67,6 +68,15 @@ export default class LoginInScreen extends Component {
     this.setState({ fontLoaded: true });
   }
 
+  resetRoute = () => {
+    const resetAction = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Main' })],
+    });
+
+    this.props.navigation.dispatch(resetAction);
+  };
+
   loginIn = () => {
     const { number, password, selectedType } = this.state;
     LayoutAnimation.easeInEaseOut();
@@ -87,11 +97,10 @@ export default class LoginInScreen extends Component {
         .then(res => {
           dismissKeyboard();
           const resData = res;
-          console.log(resData);
           setToken('sau-token', resData.data.accessToken);
           storage.save('user-info', resData.data.userInfo);
           Toast.success(resData.info);
-          this.props.navigation.navigate('Home');
+          this.resetRoute();
         });
     }
   };

@@ -1,15 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Dimensions,
-  Alert,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
   List,
   InputItem,
@@ -20,17 +10,13 @@ import {
   DatePicker,
   Toast,
 } from 'antd-mobile';
-
 import { Header, Button, Icon } from 'react-native-elements';
-import { createForm } from 'rc-form';
-import dismissKeyboard from 'dismissKeyboard';
 import http from '../utils/http';
+import { storage } from '../utils/storageTool';
+import dismissKeyboard from 'dismissKeyboard';
+import { createForm } from 'rc-form';
 
 const Item = List.Item;
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-
 const academy = [
   {
     label: '计算机学院',
@@ -69,22 +55,26 @@ const profession = [
   },
 ];
 
-class ScanInfoScreen extends Component {
+const nowTimeStamp = Date.now();
+const now = new Date(nowTimeStamp);
+
+class ModifyTeacher extends Component {
   static navigationOptions = {
     header: null,
   };
-  constructor() {
-    super();
 
-    this.state = {
-      date: '',
-      isLoading: false,
-    };
-  }
+  state = {
+    userInfo: {},
+    date: now,
+    isModify: false,
+    isDisable: true,
+  };
+
   onSubmit = () => {
     const navigation = this.props.navigation;
+    const { teacherInfo } = navigation.state.params;
     this.setState({
-      isLoading: true,
+      isModify: false,
     });
     this.props.form.validateFields({ force: true }, error => {
       if (!error) {
@@ -96,25 +86,31 @@ class ScanInfoScreen extends Component {
           academy,
         } = this.props.form.getFieldsValue();
         http
-          .post('/public/scanInfo', { name, date, profession, academy })
+          .post('/public/updateTeacherById', {
+            id: teacherInfo.id,
+            name: name,
+            date: date,
+            profession: profession[0],
+            academy: academy[0],
+          })
           .then(res => {
             this.setState({
-              isLoading: false,
+              isModify: false,
             });
             const data = res.data;
-            Toast.success('录入成功', 1, null, false);
+            Toast.success('提交成功', 1, null, false);
             dismissKeyboard();
-            navigation.navigate('scanInfoComplete');
+            navigation.navigate('ModifyComplete');
           })
           .catch(err => {
             this.setState({
-              isLoading: false,
+              isModify: false,
             });
             console.log(err);
           });
       } else {
         this.setState({
-          isLoading: false,
+          isModify: false,
         });
         Toast.fail('请填写完整');
       }
@@ -130,17 +126,26 @@ class ScanInfoScreen extends Component {
       callback(new Error('At least four charactors for account'));
     }
   };
+
+  handleModify = () => {
+    this.setState({ isModify: true, isDisable: false });
+    Toast.info('可以编辑了', 2, null, false);
+  };
+
   render() {
+    const { userInfo, isModify, isDisable } = this.state;
+    const { teacherInfo } = this.props.navigation.state.params;
     const { getFieldProps, getFieldError } = this.props.form;
-    const { isLoading } = this.state;
+
     return (
       <View style={styles.container}>
         <Header
-          centerComponent={{ text: '个人信息', style: { color: '#fff' } }}
+          centerComponent={{ text: '修改个人信息', style: { color: '#fff' } }}
         />
-        <List renderHeader={() => '参评教师信息录入'}>
+        <List>
           <InputItem
             {...getFieldProps('name', {
+              initialValue: teacherInfo.name,
               rules: [{ required: true, message: 'Please input name' }],
             })}
             clear
@@ -148,25 +153,30 @@ class ScanInfoScreen extends Component {
             onErrorClick={() => {
               alert(getFieldError('name').join('、'));
             }}
+            editable={isModify}
             placeholder="姓名"
+            ref={el => (this.inputRef = el)}
           >
             姓名
           </InputItem>
-
           <Picker
             data={profession}
             cols={1}
+            disabled={!isModify}
             {...getFieldProps('profession', {
-              rules: [{ required: true, message: 'Please input name' }],
+              rules: [{ required: true, message: '请输入职称' }],
+              initialValue: [teacherInfo.profession],
             })}
           >
             <List.Item arrow="horizontal">职称</List.Item>
           </Picker>
           <Picker
             data={academy}
+            disabled={!isModify}
             cols={1}
             {...getFieldProps('academy', {
-              rules: [{ required: true, message: 'Please input name' }],
+              rules: [{ required: true, message: '请输入学院' }],
+              initialValue: [teacherInfo.academy],
             })}
           >
             <List.Item arrow="horizontal">学院</List.Item>
@@ -175,29 +185,38 @@ class ScanInfoScreen extends Component {
           <DatePicker
             {...getFieldProps('date', {
               initialValue: this.state.date,
-              rules: [{ required: true, message: 'Must select a date' }],
+              rules: [{ required: true, message: '请输入日期' }],
             })}
+            disabled={!isModify}
             mode="date"
             title="参评日期"
             extra="请选择"
-            minDate={new Date()}
           >
             <List.Item arrow="horizontal">参评日期</List.Item>
           </DatePicker>
         </List>
-        <Button
-          loading={isLoading}
-          title="提交"
-          containerStyle={{ flex: -1 }}
-          buttonStyle={styles.submitButton}
-          linearGradientProps={{
-            colors: ['#FF9800', '#F44336'],
-            start: [1, 0],
-            end: [0.2, 0],
-          }}
-          onPress={this.onSubmit}
-          disabled={isLoading}
-        />
+
+        <View style={styles.buttonContainer}>
+          <Button
+            raised
+            icon={{ name: 'cached' }}
+            title="修改"
+            borderRadius={10}
+            buttonStyle={{ width: 150 }}
+            onPress={this.handleModify}
+            backgroundColor="#219488"
+          />
+          <Button
+            raised
+            icon={{ name: 'cached' }}
+            title="保存"
+            borderRadius={10}
+            buttonStyle={{ width: 150 }}
+            backgroundColor="#8CBF59"
+            onPress={this.onSubmit}
+            disabled={isDisable}
+          />
+        </View>
       </View>
     );
   }
@@ -206,15 +225,12 @@ class ScanInfoScreen extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
-  submitButton: {
-    backgroundColor: 'green',
-    width: SCREEN_WIDTH - 40,
-    alignSelf: 'center',
-    marginTop: 40,
-    borderRadius: 20,
+  buttonContainer: {
+    marginTop: 50,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 });
 
-export default createForm()(ScanInfoScreen);
+export default createForm()(ModifyTeacher);

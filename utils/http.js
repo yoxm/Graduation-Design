@@ -9,12 +9,6 @@ const CancelToken = axios.CancelToken;
 axios.interceptors.request.use(
   config => {
     //发起请求时，取消掉当前正在进行的相同请求
-    if (promiseArr[config.url]) {
-      promiseArr[config.url]('操作取消');
-      promiseArr[config.url] = cancel;
-    } else {
-      promiseArr[config.url] = cancel;
-    }
     return config;
   },
   error => {
@@ -72,7 +66,9 @@ axios.interceptors.response.use(
     } else {
       error.message = '连接到服务器失败';
     }
-    message.error(error);
+    console.log('====================================');
+    console.log(err);
+    console.log('====================================');
     return Promise.resolve(error.response);
   },
 );
