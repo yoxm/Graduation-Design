@@ -10,7 +10,10 @@ import {
 import { Avatar, Button } from 'react-native-elements';
 import { List, ListItem } from 'react-native-elements';
 import { delToken } from '../utils/tokenUtil';
+import { WebBrowser, FileSystem } from 'expo';
 import { storage } from '../utils/storageTool';
+import http from '../utils/http';
+import { FileOpener } from 'react-native-file-opener';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -182,7 +185,9 @@ export default class ProfileScreen extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  alert('342');
+                  WebBrowser.openBrowserAsync(
+                    'http://10.0.3.2:3000/public/exportTeacher',
+                  );
                 }}
               >
                 <ListItem

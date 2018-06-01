@@ -1,4 +1,4 @@
-import { Notifications } from 'expo';
+import { Notifications, AppLoading } from 'expo';
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
 import { View, Text } from 'react-native';
@@ -34,14 +34,23 @@ export default class RootNavigator extends React.Component {
 
     this.state = {
       isLogin: false,
+      isLoadingComplete: false,
     };
   }
+
+  getToken = () => {};
+
   componentDidMount() {
     this._notificationSubscription = this._registerForPushNotifications();
     getToken('sau-token', token => {
       if (token) {
         this.setState({
           isLogin: true,
+          isLoadingComplete: true,
+        });
+      } else {
+        this.setState({
+          isLoadingComplete: true,
         });
       }
     });
@@ -52,9 +61,11 @@ export default class RootNavigator extends React.Component {
   }
 
   render() {
-    const { isLogin, isLoading } = this.state;
+    const { isLogin, isLoadingComplete } = this.state;
     const RootNavigator = configRootNavigator(this.state.isLogin);
-
+    if (!isLoadingComplete) {
+      return <Loading />;
+    }
     return <RootNavigator />;
   }
 

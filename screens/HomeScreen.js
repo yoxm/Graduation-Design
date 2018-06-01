@@ -90,7 +90,6 @@ export default class HomeScreen extends React.Component {
   };
 
   _sectionComp = info => {
-    console.log(info);
     return (
       <Card
         title={info.section.academy}
@@ -103,6 +102,7 @@ export default class HomeScreen extends React.Component {
     );
   };
 
+  //TO_DO 搜索功能实现
   handleSearchChange = () => {};
   handleSearchClear = () => {};
   /**

@@ -77,14 +77,23 @@ export default class EvaluateScreen extends Component {
       Toast.fail('请填写完整！', 2, null, false);
     } else {
       let resultArr = [];
+      let satisfactRate = '';
+      let count = 0;
       evaluateResult.forEach((value, index) => {
         resultArr.push({ desc: index, ans: value });
       });
+      resultArr.map(item => {
+        if (item.ans.ans === '满意') {
+          count++;
+        }
+      });
+      satisfactRate = count / resultArr.length;
       http
         .post('public/entryResult', {
           appraiser: userInfo.id,
           evaluateResult: resultArr,
           commentedTeacherId: teacherInfo.id,
+          satisfactRate: satisfactRate,
         })
         .then(res => {
           this.setState({
@@ -97,12 +106,13 @@ export default class EvaluateScreen extends Component {
             loading: false,
           });
         });
-      http
-        .get(`public/setCommentedById?id=${teacherInfo.id}`)
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+      // 设置已评价标志;
+      // http
+      //   .get(`public/setCommentedById?id=${teacherInfo.id}`)
+      //   .then(res => console.log(res))
+      //   .catch(err => console.log(err));
 
-      navigation.navigate('EvaluateComplete');
+      // navigation.navigate('EvaluateComplete');
     }
   };
 

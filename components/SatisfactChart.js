@@ -39,7 +39,6 @@ export default class SatisfactChart extends Component {
           radius: '55%',
           center: ['50%', '50%'],
           data: [
-            { value: 335, name: '非常满意' },
             { value: 310, name: '一般' },
             { value: 274, name: '很满意' },
             { value: 235, name: '不满意' },
