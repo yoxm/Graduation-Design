@@ -1,12 +1,26 @@
 import React, { Component } from 'react';
 import { View, Dimensions, StyleSheet } from 'react-native';
 import Echarts from 'native-echarts';
+import http from '../utils/http';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default class SatisfactChart extends Component {
+  state = {
+    data: [],
+  };
+
+  async componentWillMount() {
+    const res = await http.get('/public/getSatisfation');
+    if (res.code === 0) {
+      this.setState({
+        data: res.data.rate,
+      });
+    }
+  }
   render() {
+    const { data } = this.state;
     const satisfactOption = {
       backgroundColor: '#2c343c',
 
@@ -26,24 +40,19 @@ export default class SatisfactChart extends Component {
 
       visualMap: {
         show: false,
-        min: 80,
-        max: 600,
+        min: 0,
+        max: 1,
         inRange: {
           colorLightness: [0, 1],
         },
       },
       series: [
         {
-          name: '访问来源',
+          name: '满意度',
           type: 'pie',
           radius: '55%',
           center: ['50%', '50%'],
-          data: [
-            { value: 310, name: '一般' },
-            { value: 274, name: '很满意' },
-            { value: 235, name: '不满意' },
-            { value: 400, name: '未评价' },
-          ].sort(function(a, b) {
+          data: data.sort(function(a, b) {
             return a.value - b.value;
           }),
           roseType: 'radius',

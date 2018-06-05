@@ -175,7 +175,9 @@ export default class ProfileScreen extends Component {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  alert('342');
+                  WebBrowser.openBrowserAsync(
+                    'http://10.0.3.2:3000/public/exportEvaluate',
+                  );
                 }}
               >
                 <ListItem

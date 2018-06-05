@@ -16,11 +16,7 @@ export default class EvaluateChartsScreen extends Component {
   };
 
   render() {
-    const tabs = [
-      { title: '满意度' },
-      { title: '历年满意度' },
-      { title: '满意度分布' },
-    ];
+    const tabs = [{ title: '满意度' }, { title: '不同纬度分析' }];
 
     return (
       <View style={styles.container}>
@@ -35,9 +31,6 @@ export default class EvaluateChartsScreen extends Component {
             </View>
             <View style={styles.contentContainer}>
               <YearChart />
-            </View>
-            <View style={styles.contentContainer}>
-              <DistrubuteChart />
             </View>
           </Tabs>
         </View>

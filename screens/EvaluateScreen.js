@@ -87,13 +87,12 @@ export default class EvaluateScreen extends Component {
           count++;
         }
       });
-      satisfactRate = count / resultArr.length;
       http
         .post('public/entryResult', {
           appraiser: userInfo.id,
           evaluateResult: resultArr,
           commentedTeacherId: teacherInfo.id,
-          satisfactRate: satisfactRate,
+          satisfactRate: count,
         })
         .then(res => {
           this.setState({
@@ -112,7 +111,7 @@ export default class EvaluateScreen extends Component {
       //   .then(res => console.log(res))
       //   .catch(err => console.log(err));
 
-      // navigation.navigate('EvaluateComplete');
+      navigation.navigate('EvaluateComplete');
     }
   };
 
