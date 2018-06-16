@@ -25,7 +25,7 @@ export default class EvaluateChartsScreen extends Component {
         />
         <WhiteSpace />
         <View style={{ height: 900 }}>
-          <Tabs tabs={tabs} initialPage={1} tabBarPosition="top">
+          <Tabs tabs={tabs} tabBarPosition="top">
             <View style={styles.contentContainer}>
               <SatisfactChart />
             </View>

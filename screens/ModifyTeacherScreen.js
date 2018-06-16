@@ -1,22 +1,11 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import {
-  List,
-  InputItem,
-  Switch,
-  Stepper,
-  Range,
-  Picker,
-  DatePicker,
-  Toast,
-} from 'antd-mobile';
+import { List, InputItem, Picker, DatePicker, Toast } from 'antd-mobile';
 import { Header, Button, Icon } from 'react-native-elements';
 import http from '../utils/http';
-import { storage } from '../utils/storageTool';
 import dismissKeyboard from 'dismissKeyboard';
 import { createForm } from 'rc-form';
 
-const Item = List.Item;
 const academy = [
   {
     label: '计算机学院',
@@ -132,6 +121,15 @@ class ModifyTeacher extends Component {
     Toast.info('可以编辑了', 2, null, false);
   };
 
+  handleDelete = () => {
+    const navigation = this.props.navigation;
+    const { teacherInfo } = navigation.state.params;
+    const { id } = teacherInfo;
+    http.get(`public/deleteTeacherById?id=${id}`).then(res => {
+      Toast.info('删除成功', 3, null, true);
+    });
+  };
+
   render() {
     const { userInfo, isModify, isDisable } = this.state;
     const { teacherInfo } = this.props.navigation.state.params;
@@ -202,7 +200,7 @@ class ModifyTeacher extends Component {
             icon={{ name: 'cached' }}
             title="修改"
             borderRadius={10}
-            buttonStyle={{ width: 150 }}
+            buttonStyle={{ width: 100 }}
             onPress={this.handleModify}
             backgroundColor="#219488"
           />
@@ -211,9 +209,19 @@ class ModifyTeacher extends Component {
             icon={{ name: 'cached' }}
             title="保存"
             borderRadius={10}
-            buttonStyle={{ width: 150 }}
+            buttonStyle={{ width: 100 }}
             backgroundColor="#8CBF59"
             onPress={this.onSubmit}
+            disabled={isDisable}
+          />
+          <Button
+            raised
+            icon={{ name: 'cached' }}
+            title="删除"
+            borderRadius={10}
+            buttonStyle={{ width: 100 }}
+            backgroundColor="#8CBF59"
+            onPress={this.handleDelete}
             disabled={isDisable}
           />
         </View>
