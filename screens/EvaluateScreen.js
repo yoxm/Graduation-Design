@@ -77,22 +77,65 @@ export default class EvaluateScreen extends Component {
       Toast.fail('请填写完整！', 2, null, false);
     } else {
       let resultArr = [];
-      let satisfactRate = '';
-      let count = 0;
+      let satisfactCount = 0,
+        generalCount = 0,
+        unsatisfactCount = 0;
+      let satisfactCount1 = 0,
+        generalCount1 = 0,
+        unsatisfactCount1 = 0;
+      let satisfactCount2 = 0,
+        generalCount2 = 0,
+        unsatisfactCount2 = 0;
+      let satisfactCount3 = 0,
+        generalCount3 = 0,
+        unsatisfactCount3 = 0;
       evaluateResult.forEach((value, index) => {
         resultArr.push({ desc: index, ans: value });
       });
+      console.log(resultArr);
       resultArr.map(item => {
-        if (item.ans.ans === '满意') {
-          count++;
+        if (item.desc === 'question-01') {
+          if (item.ans.ans === '满意') {
+            satisfactCount1++;
+          } else if (item.ans.ans === '一般') {
+            generalCount1++;
+          } else {
+            unsatisfactCount1++;
+          }
+        } else if (item.desc === 'question-02') {
+          if (item.ans.ans === '满意') {
+            satisfactCount2++;
+          } else if (item.ans.ans === '一般') {
+            generalCount2++;
+          } else {
+            unsatisfactCount2++;
+          }
+        } else {
+          if (item.ans.ans === '满意') {
+            satisfactCount3++;
+          } else if (item.ans.ans === '一般') {
+            generalCount3++;
+          } else {
+            unsatisfactCount3++;
+          }
         }
       });
+      satisfactCount =
+        satisfactCount1 * 0.5 + satisfactCount2 * 0.3 + satisfactCount3 * 0.2;
+      generalCount =
+        generalCount1 * 0.5 + generalCount2 * 0.3 + generalCount3 * 0.2;
+      unsatisfactCount =
+        unsatisfactCount1 * 0.5 +
+        unsatisfactCount2 * 0.3 +
+        unsatisfactCount3 * 0.2;
       http
         .post('public/entryResult', {
           appraiser: userInfo.id,
           evaluateResult: resultArr,
           commentedTeacherId: teacherInfo.id,
-          satisfactRate: count,
+          satisfactRate: satisfactCount,
+          generalRate: generalCount,
+          unsatisfactRate: unsatisfactCount,
         })
         .then(res => {
           this.setState({

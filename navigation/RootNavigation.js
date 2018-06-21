@@ -1,7 +1,6 @@
 import { Notifications, AppLoading } from 'expo';
 import React from 'react';
 import { StackNavigator } from 'react-navigation';
-import { View, Text } from 'react-native';
 import MainTabNavigator from './MainTabNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
 import LoginInScreen from '../screens/LoginInScreen';
@@ -33,26 +32,36 @@ export default class RootNavigator extends React.Component {
     super(props);
 
     this.state = {
-      isLogin: false,
+      isLogin: true,
       isLoadingComplete: false,
     };
   }
 
-  getToken = () => {};
-
   componentDidMount() {
     this._notificationSubscription = this._registerForPushNotifications();
-    getToken('sau-token', token => {
-      if (token) {
-        this.setState({
-          isLogin: true,
-          isLoadingComplete: true,
-        });
-      } else {
-        this.setState({
-          isLoadingComplete: true,
-        });
-      }
+    let getTokenPromise = new Promise((resolve, reject) => {
+      getToken(
+        'sau-token',
+        token => {
+          if (token) {
+            this.setState({
+              isLogin: true,
+              isLoadingComplete: true,
+            });
+          } else {
+            this.setState({
+              isLogin: false,
+              isLoadingComplete: true,
+            });
+          }
+        },
+        err => {
+          this.setState({
+            isLogin: false,
+            isLoadingComplete: true,
+          });
+        },
+      );
     });
   }
 
@@ -61,7 +70,7 @@ export default class RootNavigator extends React.Component {
   }
 
   render() {
-    const { isLogin, isLoadingComplete } = this.state;
+    const { isLoadingComplete } = this.state;
     const RootNavigator = configRootNavigator(this.state.isLogin);
     if (!isLoadingComplete) {
       return <Loading />;

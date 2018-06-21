@@ -1,7 +1,7 @@
 import { storage } from './storageTool';
 // 获取Token
-export let getToken = (key, callback) => {
-  storage.load(key, callback);
+export let getToken = (key, callback, errorCallback) => {
+  storage.load(key, callback, errorCallback);
 };
 //设置token
 export const setToken = (key, token) => {

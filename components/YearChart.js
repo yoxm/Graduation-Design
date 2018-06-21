@@ -4,16 +4,14 @@ import Echarts from 'native-echarts';
 import http from '../utils/http';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 export default class YearChart extends Component {
   state = {
     data: [],
   };
 
-  async componentWillMount() {
+  async componentDidMount() {
     const res = await http.get('/public/getSatisfationMost');
-    console.log(res);
     this.setState({
       data: res.data.evaluate,
     });
@@ -146,11 +144,10 @@ export default class YearChart extends Component {
             },
           },
 
-          data: data[i].data
-            .map(function(ele) {
-              return ele.value[1];
-            })
-            .reverse(),
+          data: data[i].data.map(function(ele) {
+            return ele.value[1];
+          }),
+          // .reverse(),
         },
         series: [
           {
@@ -162,22 +159,17 @@ export default class YearChart extends Component {
               },
             },
             data: data[i].data
-              .map(function(ele) {
+              .map(ele => {
                 return ele.value[0];
               })
-              .sort(function(a, b) {
+              .sort((a, b) => {
                 return a > b;
               }),
           },
         ],
       });
     }
-    const yearOption = {};
 
-    return (
-      <ScrollView>
-        <Echarts option={option} width={SCREEN_WIDTH} />
-      </ScrollView>
-    );
+    return <Echarts option={option} width={SCREEN_WIDTH} />;
   }
 }

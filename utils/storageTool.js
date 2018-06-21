@@ -51,7 +51,7 @@ const _storage = {
   },
 
   // 取数据
-  load(key, callBack) {
+  load(key, callBack, errCallback) {
     initStorage();
     storage
       .load({
@@ -84,6 +84,7 @@ const _storage = {
         //如果没有找到数据且没有sync方法，
         //或者有其他异常，则在catch中返回
         // console.warn(err.message);
+        errCallback && errCallback(err);
         switch (err.name) {
           case 'NotFoundError':
             // TODO
